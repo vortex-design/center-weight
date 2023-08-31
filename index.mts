@@ -21,19 +21,34 @@ createReadStream('vortex-logo.png')
 			let rowWeight = 0
 			for (let x = 0; x < width; x++) {
 				const idx = (width * y + x) << 2
-
-				// Read RGBA values
 				const red = this.data[idx]
 				const green = this.data[idx + 1]
 				const blue = this.data[idx + 2]
-
 				rowWeight += (red + green + blue) / 3
-				// const alpha = this.data[idx + 3]
-
-				// pixelData2D[y][x] = { red, green, blue, alpha }
 			}
 			rowWeights[y] = rowWeight / width / 255
 		}
 
 		console.dir(rowWeights)
+
+		let topCursor = 0
+		let bottomCursor = height - 1
+		let topWeight = 0
+		let bottomWeight = 0
+		let topTotal = 0
+		let bottomTotal = 0
+
+		while (topCursor < bottomCursor) {
+			if (topWeight > bottomWeight) {
+				bottomTotal += rowWeights[bottomCursor]
+				bottomWeight = bottomTotal / (height - bottomCursor--)
+			} else {
+				topTotal += rowWeights[topCursor]
+				topWeight = topTotal / ++topCursor
+			}
+		}
+
+		console.log('topWeight:', topWeight)
+		console.log('bottomWeight:', bottomWeight)
+		console.log('newCenter:', topCursor)
 	})
